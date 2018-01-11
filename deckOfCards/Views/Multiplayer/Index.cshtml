@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "Multiplayer Home";
+}
+
+
+<div class="row">
+    <h2></h2>
+    <div class="col-lg-12">
+
+        @if (Session["ErrorMessageMultiplayer"] != null)
+        {
+            <div class="alert alert-danger">
+                <strong>@Session["ErrorMessage"]</strong>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <div class="row">
+        <div class="jumbotron col-lg-5" style=" height: 600px; overflow-y: scroll;">
+            <h2 style=" margin-left: -40px; margin-top:-40px" class="text-center"> players in the game</h2>
+            <hr />
+            @{
+                int PlayerNumber = (int)Session["NumberOfPlayers"];
+                for (int i = PlayerNumber; i > 0; i--)
+                {
+                    <div style=" min-height: 110px">
+                        <h3 style=" margin-left: -40px;">player #@PlayerNumber:   @Html.ActionLink("Deal a Card", "DealOneCard", "Multiplayer", new { playernumber = PlayerNumber }, null)</h3>
+
+                        @foreach (var card in (List<string>
+                            )ViewData["MultiplayerDealtCards" + PlayerNumber])
+                        {
+
+                            <img src="@Url.Content(string.Format("~/images/deck/" + card + ".png"))" width="60" height="90" style=" margin-left: -30px" />
+
+
+                        }
+                    </div>
+
+
+                    PlayerNumber--;
+                }
+
+            }
+        </div>
+
+        <div class="jumbotron col-lg-offset-1 col-lg-5  " style=" height: 600px; overflow-y: scroll;">
+            <h2 style=" margin-left: -40px; margin-top:-40px" class="text-center">Cards in the Deck</h2>
+            @{
+                foreach (var card in (string[])ViewData["DeckArray"])
+                {
+                    <img src="@Url.Content(string.Format("~/images/deck/"+card+".png"))" width="60" height="90" style=" margin-left: -30px" />
+                }
+
+            }
+        </div>
+
+
+        <div class="col-lg-1  btn-group-vertical btn-block">
+            <input type="button" class="btn btn-primary  btn-lg" onclick="AddPlayer()" value="Add Player" />
+            <input type="button" class="btn btn-primary  btn-lg" onclick="Shuffle()" value="Shuffle" />
+            <input type="button" class="btn btn-primary   btn-lg" onclick="Clear()" value="Start Again" />
+        </div>
+    </div>
+</div>
+
+    <script>
+
+        function Shuffle() {
+            $.get("/multiplayer/Shuffle", function (data) {
+                location.reload();
+            });
+        }
+        function DealOneCard(n) {
+            $.get("/multiplayer/DealOneCard/" + n, function (data) {
+                location.reload();
+            });
+        }
+        function Clear() {
+            $.get("/multiplayer/Clear", function (data) {
+                location.reload();
+            });
+        }
+        function AddPlayer() {
+            $.get("/multiplayer/AddPlayer", function (data) {
+                location.reload();
+            });
+        }
+    </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
